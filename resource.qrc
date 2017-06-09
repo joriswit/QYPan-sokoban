@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/main.qml</file>
+        <file>qml/TopPage.qml</file>
+        <file>qml/compoent/ButtonA.qml</file>
+        <file>qml/ChoseLevelPage.qml</file>
+        <file>qml/compoent/TagButton.qml</file>
+        <file>images/man_push_purple.png</file>
+        <file>images/previous_item_green.png</file>
+        <file>images/previous_item_light_green.png</file>
+        <file>images/top_right_green_tag.png</file>
+        <file>images/top_right_purple_tag.png</file>
+        <file>images/previous_item_light_purple.png</file>
+        <file>images/previous_item_purple.png</file>
+    </qresource>
+</RCC>
