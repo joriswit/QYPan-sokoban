@@ -89,7 +89,7 @@ Rectangle {
                 height: width
                 anchors.centerIn: parent
                 //color: cellArea.pressed ? "#66cc66" : (levelState[index] ? "#66cc33" : "#99cc66")
-                color: isLocked ? lockedColor : defaultColor
+                color: isLocked ? lockedColor : (cellArea.pressed ? pressedColor : defaultColor)
                 Text {
                     text: index+1
                     color: "white"
@@ -98,11 +98,8 @@ Rectangle {
                 }
                 MouseArea {
                     id: cellArea
-                    //enabled: levelState[index] ? true : false
                     enabled: !isLocked
                     anchors.fill: parent
-                    onPressed: parent.color = pressedColor
-                    onReleased: parent.color = defaultColor
                     onClicked: {
                     }
                 }

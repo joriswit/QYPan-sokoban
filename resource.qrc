@@ -12,5 +12,6 @@
         <file>images/top_right_purple_tag.png</file>
         <file>images/previous_item_light_purple.png</file>
         <file>images/previous_item_purple.png</file>
+        <file>config/mapinformation.lua</file>
     </qresource>
 </RCC>

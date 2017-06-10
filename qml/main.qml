@@ -1,6 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Window 2.2
+import MapManager 1.0
 
 ApplicationWindow {
     id: root
@@ -35,6 +36,7 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
+        map_manager.loadMap(MapManager.CLASSIC, 1);
         stackView.push(Qt.resolvedUrl("/qml/TopPage.qml"));
     }
 }
