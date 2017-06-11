@@ -1,8 +1,11 @@
 #include "../include/mapmanager.h"
+
 #include <QFile>
 #include <QTextStream>
 #include <QDir>
 #include <QDebug>
+#include <iostream>
+using namespace std;
 
 extern "C"
 {
@@ -16,8 +19,10 @@ MapManager::MapManager(QObject *parent)
       max_classic_level_(0),
       max_self_make_level_(0)
 {
-    classic_maps_directory_ = QDir::currentPath() + "/config/levels/classic/";
-    self_make_maps_directory_ = QDir::currentPath() + "/config/levels/self_make/";
+    //classic_maps_directory_ = QDir::currentPath() + "/config/levels/classic/";
+    //self_make_maps_directory_ = QDir::currentPath() + "/config/levels/self_make/";
+    classic_maps_directory_ = "../sokoban/config/levels/classic/";
+    self_make_maps_directory_ = "../sokoban/config/levels/self_make/";
 }
 
 bool MapManager::loadMap(MapType type){
@@ -26,21 +31,25 @@ bool MapManager::loadMap(MapType type){
         qDebug() << "lua: new state fault";
         return false;
     }
-    int ok = luaL_loadfile(L, "../config/mapinformation.lua");
-    if(ok){
-        qDebug() << "lua: load file fault";
-        return false;
-    }
-    ok = lua_pcall(L, 0, 0, 0);
-    if(ok){
-        qDebug() << "lua: run file fault";
+
+    //luaL_openlibs(L);
+
+    int error = luaL_dofile(L, "../sokoban/config/mapinformation.lua");
+    if(error){
+        qDebug() << "lua: do file fault";
         return false;
     }
 
     lua_getglobal(L, "classic_levels");
     lua_getglobal(L, "self_make_levels");
 
+    int t1 = lua_type(L, -1);
+    int t2 = lua_type(L, -2);
+    qDebug() << "lua type[" << t1 << "]";
+    qDebug() << "lua type[" << t2 << "]";
+
     if(!lua_isnumber(L, -1) || !lua_isnumber(L, -2)){
+        qDebug() << "lua: bad data type";
         return false;
     }
 
@@ -49,6 +58,18 @@ bool MapManager::loadMap(MapType type){
 
     qDebug() << "classic_levels[" << max_classic_level_ << "]";
     qDebug() << "self_make_levels[" << max_self_make_level_ << "]";
+
+    if(type == CLASSIC){
+        for(int i = 0; i < max_classic_level_; i++) loadMap(CLASSIC, i+1);
+    }else if(type == SELF_MAKE){
+        for(int i = 0; i < max_self_make_level_; i++) loadMap(SELF_MAKE, i+1);
+    }else{
+        lua_close(L);
+        return false;
+    }
+
+    lua_close(L);
+
     return true;
 }
 
@@ -103,6 +124,7 @@ bool MapManager::loadMap(MapType type, const QString &path){
         map_info.cells += line;
     }
 
+    qDebug() << "type[" << type << "]";
     qDebug() << "row[" << map_info.row << "]";
     qDebug() << "column[" << map_info.column << "]";
     qDebug() << "cells[" << map_info.cells << "]";
@@ -112,5 +134,22 @@ bool MapManager::loadMap(MapType type, const QString &path){
     }else if(type == SELF_MAKE){
         self_make_maps_.append(map_info);
     }
+    file.close();
     return true;
+}
+
+int MapManager::maxClassicLevel() const{
+    return max_classic_level_;
+}
+
+int MapManager::maxSelfMakeLevel() const{
+    return max_self_make_level_;
+}
+
+void MapManager::setMaxClassicLevel(int level){
+    max_classic_level_ = level;
+}
+
+void MapManager::setMaxSelfMakeLevel(int level){
+    max_self_make_level_ = level;
 }

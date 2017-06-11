@@ -10,7 +10,8 @@ SOURCES += src/main.cpp \
 
 RESOURCES += resource.qrc
 
-LIBS += -LG:\qt\qml\androidtest\sokoban\lib -llualib
+# 这里当前目录指的是输出目录，而输出目录默认跟工程目录在同一个文件夹里
+LIBS += -L../sokoban/lib -llua52
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -19,4 +20,7 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 HEADERS += \
-    include/mapmanager.h
+    include/mapmanager.h \
+    include/lua/lauxlib.h \
+    include/lua/lua.h \
+    include/lua/lualib.h

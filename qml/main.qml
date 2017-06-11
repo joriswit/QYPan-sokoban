@@ -36,7 +36,8 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-        map_manager.loadMap(MapManager.CLASSIC, 1);
         stackView.push(Qt.resolvedUrl("/qml/TopPage.qml"));
+        map_manager.loadMap(MapManager.CLASSIC);
+        map_manager.loadMap(MapManager.SELF_MAKE);
     }
 }

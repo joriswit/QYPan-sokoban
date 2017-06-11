@@ -6,42 +6,15 @@ Rectangle {
     property string pageName: "choseLevelPage"
     property real horizontalSpacing: width * 0.03
     color: "#ccffcc"
-    Item {
+    TopBar {
         id: topBar
         anchors.top: parent.top
         width: parent.width
         height: parent.width * 0.15
-        TagButton {
-            id: backTagButton
-            width: parent.height * 0.65
-            height: width
-            anchors.left: parent.left
-            anchors.leftMargin: horizontalSpacing
-            anchors.verticalCenter: parent.verticalCenter
-            pressTagSource: "../../images/previous_item_light_green.png"
-            releaseTagSource: "../../images/previous_item_green.png"
-            onClicked: {
-                onBackTagButtonClicked();
-            }
+        onBackTagButtonClicked: {
+            back();
         }
-        Text {
-            id: pageTitle
-            text: qsTr("关卡选择")
-            font.pointSize: 20
-            color: "#00cc00"
-            anchors.left: backTagButton.right
-            anchors.verticalCenter: parent.verticalCenter
-        }
-        Rectangle {
-            id: dividingLine
-            anchors.left: parent.left
-            anchors.leftMargin: horizontalSpacing
-            anchors.right: parent.right
-            anchors.rightMargin: horizontalSpacing
-            anchors.bottom: parent.bottom
-            height: 2
-            color: "#00cc00"
-        }
+        titleString: qsTr("关卡选择")
     }
     Item {
         id: selfMakeLevelGridViewItem
@@ -101,6 +74,7 @@ Rectangle {
                     enabled: !isLocked
                     anchors.fill: parent
                     onClicked: {
+                        onCellAreaClicked(mapType, index);
                     }
                 }
             }
@@ -163,32 +137,43 @@ Rectangle {
         }
     }
     Component.onCompleted: {
+        init();
+    }
+
+    function init(){
+        var max_classic_level = map_manager.max_classic_level;
+        var max_self_make_level = map_manager.max_self_make_level;
         var i
-        classicLevelGridView.model.insert(0, {"isLocked" : false,
-                                       "lockedColor" : "#99cc66",
-                                       "pressedColor" : "#66cc66",
-                                       "defaultColor" : "#66cc33"});
-        for(i = 1; i < 100; i++){
-            classicLevelGridView.model.insert(i, {"isLocked" : true,
+        for(i = 0; i < max_classic_level; i++){
+            classicLevelGridView.model.insert(i, {"isLocked" : false,
+                                       "mapType" : 0,
                                        "lockedColor" : "#99cc66",
                                        "pressedColor" : "#66cc66",
                                        "defaultColor" : "#66cc33"});
         }
-        for(i = 0; i < 33; i++){
+        for(i = 0; i < max_self_make_level; i++){
             selfMakeLevelGridView.model.insert(i, {"isLocked" : false,
+                                           "mapType" : 1,
                                            "lockedColor" : "#9999cc",
                                            "pressedColor" : "#789900ff",
                                            "defaultColor" : "#9900cc"});
         }
     }
-    function onCellAreaClicked(index){
+
+    function onCellAreaClicked(type, index){
         var level = index + 1;
-        console.log("level[" + level + "]")
-        classicLevelGridView.model.setProperty(index+1, "isLocked", false);
+        console.log("classic level[" + level + "]");
+        stackView.push(Qt.resolvedUrl("LevelMap.qml"));
+        var topPage = stackView.depth - 1;
+        stackView.get(topPage).level = level;
+        stackView.get(topPage).type = type;
+        //classicLevelGridView.model.setProperty(index+1, "isLocked", false);
     }
-    function onBackTagButtonClicked(){
+
+    function back(){
         stackView.pop();
     }
+
     function onClassicButtonClicked(){
         if(classicTriangleTag.visible == false){
             selfMakeTriangleTag.visible = false;
@@ -202,17 +187,17 @@ Rectangle {
             classicButton.pressedColor = "#00cc00";
             classicTriangleTag.source = "../images/top_right_green_tag.png";
 
-            backTagButton.pressTagSource = "../../images/previous_item_light_green.png";
-            backTagButton.releaseTagSource = "../../images/previous_item_green.png";
+            topBar.pressedButtonImage = "../../images/previous_item_light_green.png";
+            topBar.defaultButtonImage = "../../images/previous_item_green.png";
 
-            dividingLine.color = "#00cc00";
-            pageTitle.color = "#00cc00";
+            topBar.defaultColor = "#00cc00";
             choseLevelRoot.color = "#ccffcc";
 
             classicLevelGridViewItem.visible = true;
             selfMakeLevelGridViewItem.visible = false;
         }
     }
+
     function onSelfMakeButtonClicked(){
         if(selfMakeTriangleTag.visible == false){
             classicTriangleTag.visible = false;
@@ -226,11 +211,10 @@ Rectangle {
             classicButton.pressedColor = "#660066";
             classicTriangleTag.source = "../images/top_right_purple_tag.png";
 
-            backTagButton.pressTagSource = "../../images/previous_item_light_purple.png";
-            backTagButton.releaseTagSource = "../../images/previous_item_purple.png";
+            topBar.pressedButtonImage = "../../images/previous_item_light_purple.png";
+            topBar.defaultButtonImage = "../../images/previous_item_purple.png";
 
-            dividingLine.color = "#660066";
-            pageTitle.color = "#660066";
+            topBar.defaultColor = "#660066";
             choseLevelRoot.color = "#cc99ff";
 
             selfMakeLevelGridViewItem.visible = true;

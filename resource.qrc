@@ -13,5 +13,7 @@
         <file>images/previous_item_light_purple.png</file>
         <file>images/previous_item_purple.png</file>
         <file>config/mapinformation.lua</file>
+        <file>qml/LevelMap.qml</file>
+        <file>qml/compoent/TopBar.qml</file>
     </qresource>
 </RCC>

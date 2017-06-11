@@ -45,9 +45,11 @@ Rectangle {
             }
         }
     }
+
     function onBeginButtonClicked(){
         stackView.push(Qt.resolvedUrl("ChoseLevelPage.qml"));
     }
+
     function onMakeButtonClicked(){
     }
 }
