@@ -27,7 +27,8 @@ public:
     MapManager(QObject *parent = 0);
     Q_INVOKABLE bool loadMap(MapType type);
     Q_INVOKABLE bool loadMap(MapType type, int level);
-    
+    Q_INVOKABLE QString openMap(MapType type, int level);
+
    int maxClassicLevel() const;
    int maxSelfMakeLevel() const;
    void setMaxClassicLevel(int level);

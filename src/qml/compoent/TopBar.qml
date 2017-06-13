@@ -3,8 +3,8 @@ import QtQuick 2.0
 Item {
     id: topBarRoot
     property string titleString: ""
-    property string defaultButtonImage: "../../images/previous_item_green.png"
-    property string pressedButtonImage: "../../images/previous_item_light_green.png"
+    property string defaultButtonImage: "../../../images/previous_item_green.png"
+    property string pressedButtonImage: "../../../images/previous_item_light_green.png"
     property string defaultColor: "#00cc00"
     signal backTagButtonClicked()
     TagButton {

@@ -1,17 +1,20 @@
-#include "../include/mapmanager.h"
+#include "../../include/mapmanager.h"
 
 #include <QFile>
 #include <QTextStream>
 #include <QDir>
 #include <QDebug>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonDocument>
 #include <iostream>
 using namespace std;
 
 extern "C"
 {
-#include "../include/lua/lua.h"
-#include "../include/lua/lauxlib.h"
-#include "../include/lua/lualib.h"
+#include "../../include/lua/lua.h"
+#include "../../include/lua/lauxlib.h"
+#include "../../include/lua/lualib.h"
 }
 
 MapManager::MapManager(QObject *parent)
@@ -71,6 +74,19 @@ bool MapManager::loadMap(MapType type){
     lua_close(L);
 
     return true;
+}
+
+QString MapManager::openMap(MapType type, int level){
+    qDebug() << "open map in c++, type[" << type << "], level[" << level << "]";
+    QJsonObject obj;
+    MapInfo map_info = (type == CLASSIC ? classic_maps_.at(level-1) : self_make_maps_.at(level-1));
+    obj.insert("row", map_info.row);
+    obj.insert("column", map_info.column);
+    obj.insert("cells", map_info.cells);
+    QJsonDocument document;
+    document.setObject(obj);
+    QByteArray bytes = document.toJson(QJsonDocument::Compact);
+    return QString(bytes);
 }
 
 bool MapManager::loadMap(MapType type, int level){

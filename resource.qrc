@@ -1,10 +1,10 @@
 <RCC>
     <qresource prefix="/">
-        <file>qml/main.qml</file>
-        <file>qml/TopPage.qml</file>
-        <file>qml/compoent/ButtonA.qml</file>
-        <file>qml/ChoseLevelPage.qml</file>
-        <file>qml/compoent/TagButton.qml</file>
+        <file>src/qml/main.qml</file>
+        <file>src/qml/TopPage.qml</file>
+        <file>src/qml/compoent/ButtonA.qml</file>
+        <file>src/qml/ChoseLevelPage.qml</file>
+        <file>src/qml/compoent/TagButton.qml</file>
         <file>images/man_push_purple.png</file>
         <file>images/previous_item_green.png</file>
         <file>images/previous_item_light_green.png</file>
@@ -13,7 +13,19 @@
         <file>images/previous_item_light_purple.png</file>
         <file>images/previous_item_purple.png</file>
         <file>config/mapinformation.lua</file>
-        <file>qml/LevelMap.qml</file>
-        <file>qml/compoent/TopBar.qml</file>
+        <file>src/qml/LevelMap.qml</file>
+        <file>src/qml/compoent/TopBar.qml</file>
+        <file>src/js/MapLogic.js</file>
+        <file>src/qml/compoent/Cell.qml</file>
+        <file>images/green_box.png</file>
+        <file>images/green_goal.png</file>
+        <file>images/green_man.png</file>
+        <file>images/green_wall.png</file>
+        <file>images/purple_box.png</file>
+        <file>images/purple_goal.png</file>
+        <file>images/purple_man.png</file>
+        <file>images/purple_wall.png</file>
+        <file>images/green_floor.png</file>
+        <file>images/purple_floor.png</file>
     </qresource>
 </RCC>

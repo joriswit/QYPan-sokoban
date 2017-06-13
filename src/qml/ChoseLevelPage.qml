@@ -88,7 +88,7 @@ Rectangle {
         anchors.topMargin: topBar.height * 0.8
         anchors.left: classicLevelGridViewItem.left
         anchors.leftMargin: horizontalSpacing * 1.5
-        text: qsTr("经 典")
+        text: qsTr("内 置")
         textSize: 15
         defaultColor: "#00cc00"
         pressedColor: "#00cc00"
@@ -101,7 +101,7 @@ Rectangle {
             width: parent.height * 0.4
             height: width
             visible: true
-            source: "../images/top_right_green_tag.png"
+            source: "../../images/top_right_green_tag.png"
             fillMode: Image.PreserveAspectFit
         }
         onClicked: {
@@ -129,7 +129,7 @@ Rectangle {
             width: parent.height * 0.4
             height: width
             visible: false
-            source: "../images/top_right_green_tag.png"
+            source: "../../images/top_right_green_tag.png"
             fillMode: Image.PreserveAspectFit
         }
         onClicked: {
@@ -167,6 +167,7 @@ Rectangle {
         var topPage = stackView.depth - 1;
         stackView.get(topPage).level = level;
         stackView.get(topPage).type = type;
+        stackView.get(topPage).openMap(type, level);
         //classicLevelGridView.model.setProperty(index+1, "isLocked", false);
     }
 
@@ -181,14 +182,14 @@ Rectangle {
 
             selfMakeButton.defaultColor = "#00cc00";
             selfMakeButton.pressedColor = "#00cc00";
-            selfMakeTriangleTag.source = "../images/top_right_green_tag.png";
+            selfMakeTriangleTag.source = "../../images/top_right_green_tag.png";
 
             classicButton.defaultColor = "#00cc00";
             classicButton.pressedColor = "#00cc00";
-            classicTriangleTag.source = "../images/top_right_green_tag.png";
+            classicTriangleTag.source = "../../images/top_right_green_tag.png";
 
-            topBar.pressedButtonImage = "../../images/previous_item_light_green.png";
-            topBar.defaultButtonImage = "../../images/previous_item_green.png";
+            topBar.pressedButtonImage = "../../../images/previous_item_light_green.png";
+            topBar.defaultButtonImage = "../../../images/previous_item_green.png";
 
             topBar.defaultColor = "#00cc00";
             choseLevelRoot.color = "#ccffcc";
@@ -205,17 +206,17 @@ Rectangle {
 
             selfMakeButton.defaultColor = "#660066";
             selfMakeButton.pressedColor = "#660066";
-            selfMakeTriangleTag.source = "../images/top_right_purple_tag.png";
+            selfMakeTriangleTag.source = "../../images/top_right_purple_tag.png";
 
             classicButton.defaultColor = "#660066";
             classicButton.pressedColor = "#660066";
-            classicTriangleTag.source = "../images/top_right_purple_tag.png";
+            classicTriangleTag.source = "../../images/top_right_purple_tag.png";
 
-            topBar.pressedButtonImage = "../../images/previous_item_light_purple.png";
-            topBar.defaultButtonImage = "../../images/previous_item_purple.png";
+            topBar.pressedButtonImage = "../../../images/previous_item_light_purple.png";
+            topBar.defaultButtonImage = "../../../images/previous_item_purple.png";
 
             topBar.defaultColor = "#660066";
-            choseLevelRoot.color = "#cc99ff";
+            choseLevelRoot.color = "#99cc99ff";
 
             selfMakeLevelGridViewItem.visible = true;
             classicLevelGridViewItem.visible = false;

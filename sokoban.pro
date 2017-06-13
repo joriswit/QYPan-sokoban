@@ -5,8 +5,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
 
-SOURCES += src/main.cpp \
-    src/mapmanager.cpp
+SOURCES += src/cpp/main.cpp \
+    src/cpp/mapmanager.cpp
 
 RESOURCES += resource.qrc
 

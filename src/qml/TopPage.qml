@@ -4,12 +4,12 @@ import "compoent"
 Rectangle {
     id: topPageRoot
     property string pageName: "topPage"
-    color: "#cc99ff"
+    color: "#99cc99ff"
     Image {
         id: topPageLogo
         width: parent.width * 0.4
         height: width
-        source: "../images/man_push_purple.png"
+        source: "../../images/man_push_purple.png"
         fillMode: Image.PreserveAspectFit
         anchors.top: parent.top
         anchors.topMargin: parent.height * 0.25
