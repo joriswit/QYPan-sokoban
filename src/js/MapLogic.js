@@ -33,6 +33,7 @@ function openMap(type, level) {
     var string_map_info = map_manager.openMap(type, level);
     console.log(string_map_info);
     map_info = JSON.parse(string_map_info);
+    map_info.type = type;
 
     adjustMapSize();
 
@@ -49,14 +50,14 @@ function openMap(type, level) {
         cell_type = static_cells[i];
         row = Math.floor(i / map_info.column);
         column = i % map_info.column;
-        static_map_objects[i] = createCell(row, column, type, cell_type);
+        static_map_objects[i] = createCell(row, column, cell_type);
     }
 
     for(i = 0; i < dynamic_cells.length; i++){
         cell_type = dynamic_cells[i];
         row = Math.floor(i / map_info.column);
         column = i % map_info.column;
-        dynamic_map_objects[i] = createCell(row, column, type, cell_type);
+        dynamic_map_objects[i] = createCell(row, column, cell_type);
     }
 }
 
@@ -74,7 +75,7 @@ function adjustMapSize(){
     mapArea.height = map_height;
 }
 
-function createCell(row, column, map_type, cell_type){
+function createCell(row, column, cell_type){
     if(component == null){
         component = Qt.createComponent("../qml/compoent/Cell.qml");
     }
@@ -90,13 +91,49 @@ function createCell(row, column, map_type, cell_type){
         obj.height = obj.width;
         obj.x = map_info.cell_size * column;
         obj.y = map_info.cell_size * row;
-        obj.mapType = map_type;
+        obj.mapType = map_info.type;
         obj.cellType = cell_type;
         return obj;
     }else{
         console.log("error loading cell component");
         console.log(component.errorString());
         return undefined;
+    }
+}
+
+function touchPosition(x, y){
+    var row = Math.floor(y / map_info.cell_size);
+    var column = Math.floor(x / map_info.cell_size);
+    console.log("touch row[" + row + "]");
+    console.log("touch column[" + column + "]");
+    var string_result = map_manager.touchPosition(row, column);
+    var result = JSON.parse(string_result);
+    if(result.type == "MAN_MOVE"){
+        console.log("type[" + result.type + "]");
+        console.log("path[" + result.path + "]");
+        manMove(result.path);
+    }
+}
+
+function manMove(path){
+    var man_position = map_info.cells.indexOf("@");
+    var i, row, column;
+    var current_postion = man_position;
+    for(i = 0; i < path.length; i++){
+        row = Math.floor(current_postion / map_info.column);
+        column = current_postion % map_info.column;
+        dynamic_map_objects[current_postion] = undefined;
+        if(path[i] == 'u'){
+            row = row - 1;
+        }else if(path[i] == 'd'){
+            row = row + 1;
+        }else if(path[i] == 'l'){
+            column = column - 1;
+        }else if(path[i] == 'r'){
+            column = column + 1;
+        }
+        current_postion = row * map_info.column + column;
+        dynamic_map_objects[i] = createCell(row, column, '@');
     }
 }
 

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QVector>
 #include <QList>
 
 class MapManager : public QObject
@@ -29,6 +30,8 @@ public:
     Q_INVOKABLE bool loadMap(MapType type, int level);
     Q_INVOKABLE QString openMap(MapType type, int level);
 
+    Q_INVOKABLE QString touchPosition(int row, int column);
+
    int maxClassicLevel() const;
    int maxSelfMakeLevel() const;
    void setMaxClassicLevel(int level);
@@ -44,6 +47,7 @@ private slots:
 private:
 
     bool loadMap(MapType type, const QString &path);
+    QString manMove(int from, int to);
 
 private:
 
@@ -51,6 +55,9 @@ private:
     QList<MapInfo> self_make_maps_;
     QString classic_maps_directory_;
     QString self_make_maps_directory_;
+    MapInfo opened_map_info_;
+    MapInfo static_map_info_;
+    MapInfo dynamic_map_info_;
     int max_classic_level_;
     int max_self_make_level_;
 };

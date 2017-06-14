@@ -56,10 +56,21 @@ Rectangle {
         Item {
             id: mapArea
             anchors.centerIn: parent
+            MouseArea {
+                id: touchArea
+                anchors.fill: parent
+                onClicked: {
+                    onTouchArea(mouse.x, mouse.y);
+                }
+            }
         }
     }
 
     Component.onCompleted: {
+    }
+
+    function onTouchArea(x, y){
+        MAP_LOGIC.touchPosition(x, y);
     }
 
     function openMap(type, level){
