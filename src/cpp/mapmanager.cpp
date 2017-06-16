@@ -89,6 +89,7 @@ QString MapManager::openMap(MapType type, int level){
     static_map_info_.cells.replace(QRegExp("[+*]"), ".");
     dynamic_map_info_.cells.replace("+", "@");
     dynamic_map_info_.cells.replace("*", "$");
+    dynamic_map_info_.cells.replace(".", "-");
 
     qDebug() << "c++ static map";
     qDebug() << static_map_info_.cells;
@@ -170,6 +171,17 @@ bool MapManager::loadMap(MapType type, const QString &path){
     return true;
 }
 
+void MapManager::setCell(int row, int column, const QString &type){
+    if(row < 0 || row >= dynamic_map_info_.row || column < 0 || column >= dynamic_map_info_.column){
+        return;
+    }
+    if(type.isEmpty()){
+        return;
+    }
+    QChar cell = type[0];
+    dynamic_map_info_.cells[row*dynamic_map_info_.column+column] = cell;
+}
+
 QString MapManager::touchPosition(int row, int column){
     if(row < 0 || row >= dynamic_map_info_.row || column < 0 || column >= dynamic_map_info_.column){
         return "";
@@ -177,23 +189,35 @@ QString MapManager::touchPosition(int row, int column){
     int position = row * dynamic_map_info_.column + column;
     QChar cell = dynamic_map_info_.cells[position];
     if(cell == QChar('-')){
-        int man_position = dynamic_map_info_.cells.indexOf(QChar('@'));
-        qDebug() << "man row[" << man_position / dynamic_map_info_.column << "]";
-        qDebug() << "man column[" << man_position % dynamic_map_info_.column << "]";
-        QString path = manMove(man_position, position);
-        QJsonObject obj;
-        obj.insert("type", "MAN_MOVE");
-        obj.insert("path", path);
-        QJsonDocument document;
-        document.setObject(obj);
-        QByteArray bytes = document.toJson(QJsonDocument::Compact);
-        return QString(bytes);
+        return touchFloor(position);
+    }else if(cell == QChar('$')){
+        return touchBox(position);
     }else{
         return "";
     }
 }
 
-QString MapManager::manMove(int from, int to){
+QString MapManager::touchBox(int position){
+    return "";
+}
+
+QString MapManager::touchFloor(int position){
+    int man_position = dynamic_map_info_.cells.indexOf(QChar('@'));
+    qDebug() << "man row[" << man_position / dynamic_map_info_.column << "]";
+    qDebug() << "man column[" << man_position % dynamic_map_info_.column << "]";
+    QString path = manPath(man_position, position);
+    QJsonObject obj;
+    obj.insert("type", "TOUCH_FLOOR");
+    obj.insert("man_position", man_position);
+    obj.insert("end_position", position);
+    obj.insert("path", path);
+    QJsonDocument document;
+    document.setObject(obj);
+    QByteArray bytes = document.toJson(QJsonDocument::Compact);
+    return QString(bytes);
+}
+
+QString MapManager::manPath(int from, int to){
     int go_x[4] = {0, 0, -1, 1};
     int go_y[4] = {-1, 1, 0, 0};
     char direction[5] = {"udlr"};
@@ -224,8 +248,8 @@ QString MapManager::manMove(int from, int to){
             PositionState new_state;
             new_state.row = current_state.row + go_y[i];
             new_state.column = current_state.column + go_x[i];
-            qDebug() << "new row[" << new_state.row << "]";
-            qDebug() << "new column[" << new_state.column << "]";
+            //qDebug() << "new row[" << new_state.row << "]";
+            //qDebug() << "new column[" << new_state.column << "]";
             int new_position = new_state.row * max_column + new_state.column;
             if(new_state.row < 0 || new_state.row >= max_row || new_state.column < 0 || new_state.column >= max_column){
                 continue;

@@ -31,6 +31,7 @@ public:
     Q_INVOKABLE QString openMap(MapType type, int level);
 
     Q_INVOKABLE QString touchPosition(int row, int column);
+    Q_INVOKABLE void setCell(int row, int column, const QString &type);
 
    int maxClassicLevel() const;
    int maxSelfMakeLevel() const;
@@ -47,7 +48,9 @@ private slots:
 private:
 
     bool loadMap(MapType type, const QString &path);
-    QString manMove(int from, int to);
+    QString manPath(int from, int to);
+    QString touchFloor(int position);
+    QString touchBox(int position);
 
 private:
 
