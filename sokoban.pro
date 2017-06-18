@@ -6,11 +6,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += c++11
 
 SOURCES += src/cpp/main.cpp \
-    src/cpp/mapmanager.cpp
+    src/cpp/mapmanager.cpp \
+    src/cpp/navigatealgorithm.cpp
 
 RESOURCES += resource.qrc
 
-# 这里当前目录指的是输出目录，而输出目录默认跟工程目录在同一个文件夹里
 LIBS += -L../sokoban/lib -llua52
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
@@ -23,4 +23,5 @@ HEADERS += \
     include/mapmanager.h \
     include/lua/lauxlib.h \
     include/lua/lua.h \
-    include/lua/lualib.h
+    include/lua/lualib.h \
+    include/navigatealgorithm.h

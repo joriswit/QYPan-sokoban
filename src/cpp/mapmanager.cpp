@@ -1,4 +1,5 @@
 #include "../../include/mapmanager.h"
+#include "../../include/navigatealgorithm.h"
 
 #include <QFile>
 #include <QChar>
@@ -22,6 +23,7 @@ extern "C"
 
 MapManager::MapManager(QObject *parent)
     : QObject(parent),
+      box_state_root_(NULL),
       max_classic_level_(0),
       max_self_make_level_(0)
 {
@@ -205,7 +207,9 @@ QString MapManager::touchFloor(int position){
     int man_position = dynamic_map_info_.cells.indexOf(QChar('@'));
     qDebug() << "man row[" << man_position / dynamic_map_info_.column << "]";
     qDebug() << "man column[" << man_position % dynamic_map_info_.column << "]";
-    QString path = manPath(man_position, position);
+    //QString path = manPath(man_position, position);
+    bool reachable = true;
+    QString path = NavigateAlgorithm::manPath(dynamic_map_info_, man_position, position, reachable);
     QJsonObject obj;
     obj.insert("type", "TOUCH_FLOOR");
     obj.insert("man_position", man_position);

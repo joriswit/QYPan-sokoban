@@ -1,7 +1,8 @@
+#include "../../include/mapmanager.h"
+
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include "../../include/mapmanager.h"
 
 int main(int argc, char *argv[])
 {

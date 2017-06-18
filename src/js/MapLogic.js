@@ -157,6 +157,12 @@ function touchPosition(x, y){
 
 function touchBox(row, column){
     console.log("touch box");
+    var man_cell = dynamic_map_objects[man_position];
+    if(man_cell.isMoving()){
+        console.log("is moving");
+        return;
+    }
+
     if(mark_box_object != null){
         mark_box_object.destroy();
     }
