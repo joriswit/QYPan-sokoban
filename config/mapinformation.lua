@@ -1,5 +1,5 @@
--- 总关卡数
-classic_levels = 4
+﻿-- 总关卡数
+classic_levels = 5
 self_make_levels = 2
 
 -- 已解关卡数

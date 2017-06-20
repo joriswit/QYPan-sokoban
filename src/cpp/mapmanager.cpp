@@ -25,7 +25,8 @@ MapManager::MapManager(QObject *parent)
     : QObject(parent),
       box_state_root_(NULL),
       max_classic_level_(0),
-      max_self_make_level_(0)
+      max_self_make_level_(0),
+      man_position_(0)
 {
     //classic_maps_directory_ = QDir::currentPath() + "/config/levels/classic/";
     //self_make_maps_directory_ = QDir::currentPath() + "/config/levels/self_make/";
@@ -85,13 +86,13 @@ QString MapManager::openMap(MapType type, int level){
     qDebug() << "open map in c++, type[" << type << "], level[" << level << "]";
     opened_map_info_ = (type == CLASSIC ? classic_maps_.at(level-1) : self_make_maps_.at(level-1));
 
+    man_position_ = opened_map_info_.cells.indexOf(QChar('@'));
     static_map_info_ = opened_map_info_;
     dynamic_map_info_ = opened_map_info_;
     static_map_info_.cells.replace(QRegExp("[@$]"), "-");
     static_map_info_.cells.replace(QRegExp("[+*]"), ".");
-    dynamic_map_info_.cells.replace("+", "@");
+    dynamic_map_info_.cells.replace(QRegExp("[+@.]"), "-");
     dynamic_map_info_.cells.replace("*", "$");
-    dynamic_map_info_.cells.replace(".", "-");
 
     qDebug() << "c++ static map";
     qDebug() << static_map_info_.cells;
@@ -182,6 +183,27 @@ void MapManager::setCell(int row, int column, const QString &type){
     }
     QChar cell = type[0];
     dynamic_map_info_.cells[row*dynamic_map_info_.column+column] = cell;
+    qDebug() << "set cell row[" << row << "],column[" << column << "],cell[" << type << "]";
+}
+
+void MapManager::freeMark(){
+    NavigateAlgorithm::freeBoxStateNodes(box_state_root_);
+    box_state_root_ = NULL;
+}
+
+void MapManager::setManPosition(int position){
+    man_position_ = position;
+}
+
+QString MapManager::getCell(int row, int column){
+    int position = row * dynamic_map_info_.column + column;
+    return QString(dynamic_map_info_.cells[position]);
+}
+
+QString MapManager::getPushPath(int row, int column){
+    int position = row * dynamic_map_info_.column + column;
+    QString push_path = NavigateAlgorithm::pushPath(box_state_root_, position);
+    return push_path;
 }
 
 QString MapManager::touchPosition(int row, int column){
@@ -200,77 +222,29 @@ QString MapManager::touchPosition(int row, int column){
 }
 
 QString MapManager::touchBox(int position){
-    return "";
-}
-
-QString MapManager::touchFloor(int position){
-    int man_position = dynamic_map_info_.cells.indexOf(QChar('@'));
-    qDebug() << "man row[" << man_position / dynamic_map_info_.column << "]";
-    qDebug() << "man column[" << man_position % dynamic_map_info_.column << "]";
-    //QString path = manPath(man_position, position);
-    bool reachable = true;
-    QString path = NavigateAlgorithm::manPath(dynamic_map_info_, man_position, position, reachable);
+    QString mark_cells = NavigateAlgorithm::reachableCells(dynamic_map_info_, box_state_root_, man_position_, position);
     QJsonObject obj;
-    obj.insert("type", "TOUCH_FLOOR");
-    obj.insert("man_position", man_position);
-    obj.insert("end_position", position);
-    obj.insert("path", path);
+    obj.insert("type", "TOUCH_BOX");
+    obj.insert("mark_cells", mark_cells);
     QJsonDocument document;
     document.setObject(obj);
     QByteArray bytes = document.toJson(QJsonDocument::Compact);
     return QString(bytes);
 }
 
-QString MapManager::manPath(int from, int to){
-    int go_x[4] = {0, 0, -1, 1};
-    int go_y[4] = {-1, 1, 0, 0};
-    char direction[5] = {"udlr"};
-
-    struct PositionState{
-        PositionState() : row(0), column(0), path("") {}
-        int row, column;
-        QString path;
-    };
-
-    int max_row = dynamic_map_info_.row;
-    int max_column = dynamic_map_info_.column;
-
-    QQueue<PositionState> queue;
-    QVector<bool> mark(dynamic_map_info_.cells.length(), false);
-    mark[from] = true;
-    PositionState from_state;
-    from_state.row = from / dynamic_map_info_.column;
-    from_state.column = from % dynamic_map_info_.column;
-    queue.enqueue(from_state);
-    while(!queue.isEmpty()){
-        PositionState current_state = queue.dequeue();
-        int position = current_state.row * max_column + current_state.column;
-        if(position == to){
-            return current_state.path;
-        }
-        for(int i = 0; i < 4; i++){
-            PositionState new_state;
-            new_state.row = current_state.row + go_y[i];
-            new_state.column = current_state.column + go_x[i];
-            //qDebug() << "new row[" << new_state.row << "]";
-            //qDebug() << "new column[" << new_state.column << "]";
-            int new_position = new_state.row * max_column + new_state.column;
-            if(new_state.row < 0 || new_state.row >= max_row || new_state.column < 0 || new_state.column >= max_column){
-                continue;
-            }
-            if(dynamic_map_info_.cells[new_position] == QChar('#') ||
-                    dynamic_map_info_.cells[new_position] == QChar('$')){
-                continue;
-            }
-            if(mark[new_position] == true){
-                continue;
-            }
-            mark[new_position] = true;
-            new_state.path = current_state.path + direction[i];
-            queue.enqueue(new_state);
-        }
-    }
-    return "";
+QString MapManager::touchFloor(int position){
+    qDebug() << "man row[" << man_position_ / dynamic_map_info_.column << "]";
+    qDebug() << "man column[" << man_position_ % dynamic_map_info_.column << "]";
+    //QString path = manPath(man_position, position);
+    bool reachable = true;
+    QString path = NavigateAlgorithm::manPath(dynamic_map_info_, man_position_, position, reachable);
+    QJsonObject obj;
+    obj.insert("type", "TOUCH_FLOOR");
+    obj.insert("path", path);
+    QJsonDocument document;
+    document.setObject(obj);
+    QByteArray bytes = document.toJson(QJsonDocument::Compact);
+    return QString(bytes);
 }
 
 int MapManager::maxClassicLevel() const{

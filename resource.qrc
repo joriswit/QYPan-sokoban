@@ -27,6 +27,9 @@
         <file>images/purple_wall.png</file>
         <file>images/green_floor.png</file>
         <file>images/purple_floor.png</file>
-        <file>images/mark.png</file>
+        <file>images/green_mark.png</file>
+        <file>images/purple_mark.png</file>
+        <file>images/green_mark_box.png</file>
+        <file>images/purple_mark_box.png</file>
     </qresource>
 </RCC>

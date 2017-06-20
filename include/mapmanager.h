@@ -16,27 +16,22 @@ struct MapInfo {
     QString cells; // 地图字符串
 };
 
-struct BoxState {
-    BoxState() : box_position(0), man_position(0) {}
-    int box_position;
-    int man_position;
-};
-
 struct BoxStateNode {
-    BoxStateNode(int box_poisition = 0, int man_poisition = 0)
-        : path(""),
-          previous(NULL),
+    BoxStateNode(int box_position_ = 0, int man_position_ = 0)
+        : previous(NULL),
+          path(""),
+          box_position(box_position_),
+          man_position(man_position_),
           next_count(0)
     {
-        state.box_position = box_poisition;
-        state.man_position = man_poisition;
         for(int i = 0; i < 4; i++) next[i] = NULL;
     }
 
     BoxStateNode *next[4];
-    BoxStateNode *prevoius;
-    BoxState state;
+    BoxStateNode *previous;
     QString path;
+    int box_position;
+    int man_position;
     int next_count;
 };
 
@@ -59,7 +54,11 @@ public:
     Q_INVOKABLE QString openMap(MapType type, int level);
 
     Q_INVOKABLE QString touchPosition(int row, int column);
+    Q_INVOKABLE QString getPushPath(int row, int column);
     Q_INVOKABLE void setCell(int row, int column, const QString &type);
+    Q_INVOKABLE void freeMark();
+    Q_INVOKABLE void setManPosition(int position);
+    Q_INVOKABLE QString getCell(int row, int column);
 
    int maxClassicLevel() const;
    int maxSelfMakeLevel() const;
@@ -76,7 +75,6 @@ private slots:
 private:
 
     bool loadMap(MapType type, const QString &path);
-    QString manPath(int from, int to);
     QString touchFloor(int position);
     QString touchBox(int position);
 
@@ -92,6 +90,7 @@ private:
     MapInfo dynamic_map_info_; // 只含墙、人和箱子的地图
     int max_classic_level_;
     int max_self_make_level_;
+    int man_position_;
 };
 
 #endif // MAPMANAGER_H
