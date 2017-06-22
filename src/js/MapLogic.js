@@ -1,15 +1,17 @@
+var is_pushing = false;
+var start_man_position = -1;
+var start_box_position = -1;
+var end_box_position = -1;
+var touch_position = -1;
 var map_info = null;
 var man_object = null;
-var start_man_position = null;
-var start_box_position = null;
-var start_box_position = null;
-var end_box_position = null;
-var touch_position = null;
 var box_border_object = null;
 var mark_box_objects = null;
 var component = null;
 var static_map_objects = null;
 var dynamic_map_objects = null;
+
+var test = 0;
 
 function alertObj(obj){
     var output = "";
@@ -18,6 +20,23 @@ function alertObj(obj){
         output+=i+" = "+property+"\n";
     }
     console.log(output);
+}
+
+function clearAll(){
+    console.log("start clear in js");
+    map_manager.clearAll();
+    map_info = null;
+    is_pushing = false;
+    start_man_position = -1;
+    start_box_position = -1;
+    end_box_position = -1;
+    touch_position = -1;
+    deleteManObject();
+    deleteBorder();
+    clearMarkBox();
+    clearDynamicObjects();
+    clearStaticObjects();
+    console.log("end clear in js");
 }
 
 function staticReplace(){
@@ -50,6 +69,9 @@ function createManObject(){
 }
 
 function openMap(type, level) {
+
+    clearAll();
+
     console.log("open map type[" + type + "], level[" + level + "]");
     var string_map_info = map_manager.openMap(type, level);
     console.log(string_map_info);
@@ -69,6 +91,9 @@ function openMap(type, level) {
     var i, cell_type, row, column;
     for(i = 0; i < static_cells.length; i++){
         cell_type = static_cells[i];
+        if(cell_type == ' '){
+            continue;
+        }
         row = Math.floor(i / map_info.column);
         column = i % map_info.column;
         static_map_objects[i] = createCell(row, column, cell_type);
@@ -76,7 +101,7 @@ function openMap(type, level) {
 
     for(i = 0; i < dynamic_cells.length; i++){
         cell_type = dynamic_cells[i];
-        if(cell_type == '-'){
+        if(cell_type == '-' || cell_type == ' '){
             continue;
         }
         row = Math.floor(i / map_info.column);
@@ -142,13 +167,14 @@ function onCompletedManMove(row, column, push_box){
         var box_column = end_box_position % map_info.column;
         console.log("end box row[" + box_row + "],column[" + box_column + "]");
         completedMove('$', box_row, box_column);
+        is_pushing = false;
     }
     completedMove('@', row, column);
 }
 
 function onKillManMove(row, column){
     completedMove('@', row, column);
-    if(touch_position != null){
+    if(touch_position != -1){
         var next_row = Math.floor(touch_position / map_info.column);
         var next_column = touch_position % map_info.column;
         console.log("next row[" + next_row + "],column[" + next_column + "]");
@@ -197,15 +223,17 @@ function touchPosition(x, y){
     }
     var t = map_manager.getCell(row, column);
     console.log("c++ touch type[" + t + "]");
+    if(is_pushing == true){
+        return;
+    }
 
-    if(hasBorder() == true){
+    if(hasBorder() == true){ // 此次点击已经有箱子被选中
         console.log("is marked");
-        deleteBorder();
+        deleteBorder(); // 删除箱子的标记
         if(mark_box_objects != null){
             var mark_cell = mark_box_objects[touch_position];
             var kill_touch = false;
             if(mark_cell == undefined){ // 除了标记的可达点以外的所有触点
-                map_manager.freeMark();
                 if(!(touch_cell != undefined && touch_cell.cellType == "$")){
                     kill_touch = true;
                 }
@@ -213,8 +241,6 @@ function touchPosition(x, y){
                 kill_touch = true;
                 if(!(touch_cell != undefined && touch_cell.cellType == "$")){
                     pushBox(touch_position);
-                }else{
-                    map_manager.freeMark();
                 }
             }
             clearMarkBox();
@@ -222,6 +248,7 @@ function touchPosition(x, y){
                 return;
             }
         }
+        map_manager.freeMark();
     }
 
     if(!(touch_cell != undefined && (touch_cell.cellType == "#" || touch_cell.cellType == "$"))){
@@ -233,6 +260,7 @@ function touchPosition(x, y){
 
 function pushBox(position){
     console.log("push box");
+    is_pushing = true;
     end_box_position = position;
     var row = Math.floor(position / map_info.column);
     var column = position % map_info.column;
@@ -263,6 +291,13 @@ function hasBorder(){
 
 function makeBorder(row, column){
     box_border_object = createCell(row, column, 'm');
+}
+
+function deleteManObject(){
+    if(man_object != null){
+        man_object.destroy();
+    }
+    man_object = null;
 }
 
 function deleteBorder(){
@@ -296,6 +331,32 @@ function responseTouch(row, column){
             markBox(result.mark_cells);
         }
     }
+}
+
+function clearStaticObjects(){
+    if(static_map_objects == null){
+        return;
+    }
+    var i;
+    for(i = 0; i < static_map_objects.length; i++){
+        if(static_map_objects[i] != undefined){
+            static_map_objects[i].destroy();
+        }
+    }
+    static_map_objects = null;
+}
+
+function clearDynamicObjects(){
+    if(dynamic_map_objects == null){
+        return;
+    }
+    var i;
+    for(i = 0; i < dynamic_map_objects.length; i++){
+        if(dynamic_map_objects[i] != undefined){
+            dynamic_map_objects[i].destroy();
+        }
+    }
+    dynamic_map_objects = null;
 }
 
 function clearMarkBox(){

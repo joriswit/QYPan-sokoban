@@ -78,6 +78,7 @@ Rectangle {
     }
 
     function back(){
+        MAP_LOGIC.clearAll();
         stackView.pop();
     }
 }

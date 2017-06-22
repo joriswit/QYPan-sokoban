@@ -57,6 +57,7 @@ public:
     Q_INVOKABLE QString getPushPath(int row, int column);
     Q_INVOKABLE void setCell(int row, int column, const QString &type);
     Q_INVOKABLE void freeMark();
+    Q_INVOKABLE void clearAll();
     Q_INVOKABLE void setManPosition(int position);
     Q_INVOKABLE QString getCell(int row, int column);
 
@@ -67,8 +68,8 @@ public:
 
 signals:
 
-    maxClassicLevelChanged(int level);
-    maxSelfMakeLevelChanged(int level);
+    void maxClassicLevelChanged(int level);
+    void maxSelfMakeLevelChanged(int level);
 
 private slots:
 

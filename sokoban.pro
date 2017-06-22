@@ -11,7 +11,7 @@ SOURCES += src/cpp/main.cpp \
 
 RESOURCES += resource.qrc
 
-LIBS += -L../sokoban/lib -llua52
+#LIBS += -L../sokoban/lib -llua52
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -25,3 +25,18 @@ HEADERS += \
     include/lua/lua.h \
     include/lua/lualib.h \
     include/navigatealgorithm.h
+
+DISTFILES += \
+    android/AndroidManifest.xml \
+    android/gradle/wrapper/gradle-wrapper.jar \
+    android/gradlew \
+    android/res/values/libs.xml \
+    android/build.gradle \
+    android/gradle/wrapper/gradle-wrapper.properties \
+    android/gradlew.bat
+
+contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
+    ANDROID_EXTRA_LIBS =
+}
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

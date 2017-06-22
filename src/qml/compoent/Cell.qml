@@ -38,7 +38,7 @@ Item {
     NumberAnimation on x {
         id: animationX
         to: newX
-        duration: 200
+        duration: 100
         running: false
         alwaysRunToEnd: true
         onStopped: {
@@ -48,7 +48,7 @@ Item {
     NumberAnimation on y {
         id: animationY
         to: newY
-        duration: 200
+        duration: 100
         running: false
         alwaysRunToEnd: true
         onStopped: {

@@ -113,7 +113,6 @@ QString NavigateAlgorithm::pushPath(BoxStateNode *root, int position){
         return path;
     }
     setPath(root, position, path);
-    freeBoxStateNodes(root);
     return path;
 }
 

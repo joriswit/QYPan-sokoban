@@ -30,11 +30,14 @@ MapManager::MapManager(QObject *parent)
 {
     //classic_maps_directory_ = QDir::currentPath() + "/config/levels/classic/";
     //self_make_maps_directory_ = QDir::currentPath() + "/config/levels/self_make/";
-    classic_maps_directory_ = "../sokoban/config/levels/classic/";
-    self_make_maps_directory_ = "../sokoban/config/levels/self_make/";
+    classic_maps_directory_ = "assets:/config/levels/classic/";
+    self_make_maps_directory_ = "assets:/config/levels/self_make/";
+    //classic_maps_directory_ = "../sokoban/config/levels/classic/";
+    //self_make_maps_directory_ = "../sokoban/config/levels/self_make/";
 }
 
 bool MapManager::loadMap(MapType type){
+#if 0
     lua_State *L = luaL_newstate();
     if(!L){
         qDebug() << "lua: new state fault";
@@ -64,6 +67,24 @@ bool MapManager::loadMap(MapType type){
 
     max_classic_level_ = lua_tointeger(L, -2);
     max_self_make_level_= lua_tointeger(L, -1);
+#endif
+    QFile file("assets:/config/mapinformation.txt");
+    //QFile file("../sokoban/config/mapinformation.txt");
+    if(!file.exists()){
+        qDebug() << "file not exists";
+        return false;
+    }
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        return false;
+    }
+    QTextStream in(&file);
+    QString line[5];
+    int line_count = 0;
+    while (!in.atEnd()) {
+        line[line_count++] = in.readLine();
+    }
+    max_classic_level_ = line[0].toInt();
+    max_self_make_level_ = line[1].toInt();
 
     qDebug() << "classic_levels[" << max_classic_level_ << "]";
     qDebug() << "self_make_levels[" << max_self_make_level_ << "]";
@@ -73,11 +94,12 @@ bool MapManager::loadMap(MapType type){
     }else if(type == SELF_MAKE){
         for(int i = 0; i < max_self_make_level_; i++) loadMap(SELF_MAKE, i+1);
     }else{
-        lua_close(L);
+        //lua_close(L);
         return false;
     }
 
-    lua_close(L);
+    //lua_close(L);
+    file.close();
 
     return true;
 }
@@ -87,6 +109,9 @@ QString MapManager::openMap(MapType type, int level){
     opened_map_info_ = (type == CLASSIC ? classic_maps_.at(level-1) : self_make_maps_.at(level-1));
 
     man_position_ = opened_map_info_.cells.indexOf(QChar('@'));
+    if(man_position_ == -1){
+        man_position_ = opened_map_info_.cells.indexOf(QChar('+'));
+    }
     static_map_info_ = opened_map_info_;
     dynamic_map_info_ = opened_map_info_;
     static_map_info_.cells.replace(QRegExp("[@$]"), "-");
@@ -186,7 +211,18 @@ void MapManager::setCell(int row, int column, const QString &type){
     qDebug() << "set cell row[" << row << "],column[" << column << "],cell[" << type << "]";
 }
 
+void MapManager::clearAll(){
+    qDebug() << "start clear in c++";
+    freeMark();
+    qDebug() << "end clear in c++";
+}
+
 void MapManager::freeMark(){
+    if(box_state_root_ == NULL){
+        qDebug() << "root is null";
+    }else{
+        qDebug() << "root is not null";
+    }
     NavigateAlgorithm::freeBoxStateNodes(box_state_root_);
     box_state_root_ = NULL;
 }
@@ -233,6 +269,8 @@ QString MapManager::touchBox(int position){
 }
 
 QString MapManager::touchFloor(int position){
+    //qDebug() << "man position[" << man_position_ << "]";
+    //qDebug() << "dynamic column[" << dynamic_map_info_.column << "]";
     qDebug() << "man row[" << man_position_ / dynamic_map_info_.column << "]";
     qDebug() << "man column[" << man_position_ % dynamic_map_info_.column << "]";
     //QString path = manPath(man_position, position);
