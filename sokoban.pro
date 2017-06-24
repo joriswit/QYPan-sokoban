@@ -2,12 +2,14 @@ TEMPLATE = app
 
 QT += qml quick
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT += androidextras
 
 CONFIG += c++11
 
 SOURCES += src/cpp/main.cpp \
     src/cpp/mapmanager.cpp \
-    src/cpp/navigatealgorithm.cpp
+    src/cpp/navigatealgorithm.cpp \
+    src/cpp/solverintent.cpp
 
 RESOURCES += resource.qrc
 
@@ -24,7 +26,8 @@ HEADERS += \
     include/lua/lauxlib.h \
     include/lua/lua.h \
     include/lua/lualib.h \
-    include/navigatealgorithm.h
+    include/navigatealgorithm.h \
+    include/solverintent.h
 
 DISTFILES += \
     android/AndroidManifest.xml \

@@ -41,6 +41,18 @@ Rectangle {
             height: 2
             color: topBarDefaultColor[type]
         }
+        ButtonA {
+            id: solveButton
+            width: height * 2
+            height: parent.height
+            text: qsTr("启动求解器")
+            defaultColor: "#660066"
+            pressedColor: "#990099"
+            visible: solver_intent.isIntentAvailable()
+            onClicked: {
+                onSolverButtonClicked();
+            }
+        }
     }
 
     Item {
@@ -67,6 +79,7 @@ Rectangle {
     }
 
     Component.onCompleted: {
+        solver_intent.solutionFound.connect(onSolutionFound);
     }
 
     function onTouchArea(x, y){
@@ -80,5 +93,14 @@ Rectangle {
     function back(){
         MAP_LOGIC.clearAll();
         stackView.pop();
+    }
+
+    function onSolverButtonClicked(){
+        solver_intent.callSolver(MAP_LOGIC.mapXsb());
+    }
+
+    function onSolutionFound(solution){
+        // TODO handle box moves in solution
+        MAP_LOGIC.manMove(solution);
     }
 }

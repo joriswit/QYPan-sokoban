@@ -1,4 +1,5 @@
 #include "../../include/mapmanager.h"
+#include "../../include/solverintent.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -11,6 +12,7 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("map_manager", new MapManager);
+    engine.rootContext()->setContextProperty("solver_intent", new SolverIntent);
     engine.load(QUrl(QStringLiteral("qrc:/src/qml/main.qml")));
 
     return app.exec();

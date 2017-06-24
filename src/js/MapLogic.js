@@ -399,6 +399,13 @@ function cellMove(start_position, path){
     cell.cellMove();
 }
 
+function mapXsb(){
+    var xsb = "";
+    for(var row = 0; row < map_info.row; row++){
+        xsb += map_info.cells.substr(row * map_info.column, map_info.column).replace(/\-/g, " ") + '\n';
+    }
+    return xsb;
+}
 
 
 
